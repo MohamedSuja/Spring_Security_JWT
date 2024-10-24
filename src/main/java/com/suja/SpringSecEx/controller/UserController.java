@@ -2,7 +2,6 @@ package com.suja.SpringSecEx.controller;
 
 
 import com.suja.SpringSecEx.model.Users;
-import com.suja.SpringSecEx.service.JWTService;
 import com.suja.SpringSecEx.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,19 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-
     @Autowired
-    private UserService userService;
+    private UserService service;
 
 
     @PostMapping("/register")
-    public Users register(@RequestBody Users user){
-        return userService.register(user);
+    public Users register(@RequestBody Users user) {
+        return service.register(user);
+
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Users user){
-        return  userService.verifyUser(user);
-    }
+    public String login(@RequestBody Users user) {
 
+        return service.verify(user);
+    }
 }

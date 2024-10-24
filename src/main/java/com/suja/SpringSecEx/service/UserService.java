@@ -13,31 +13,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-
     @Autowired
-    private UserRepo repo;
+    private JWTService jwtService;
 
     @Autowired
     AuthenticationManager authManager;
 
     @Autowired
-    private JWTService jwtService;
+    private UserRepo repo;
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
-    public Users  register(Users user){
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return repo.save(user);
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    public Users register(Users user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        repo.save(user);
+        return user;
     }
 
-    public String  verifyUser(Users user){
+    public String verify(Users user) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(user.getUsername()
-            );
+            return jwtService.generateToken(user.getUsername());
         } else {
             return "fail";
         }
     }
-
 }

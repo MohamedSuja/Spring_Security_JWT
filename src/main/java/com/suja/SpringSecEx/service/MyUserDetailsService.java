@@ -1,5 +1,6 @@
 package com.suja.SpringSecEx.service;
 
+
 import com.suja.SpringSecEx.model.UserPrincipal;
 import com.suja.SpringSecEx.model.Users;
 import com.suja.SpringSecEx.repo.UserRepo;
@@ -9,23 +10,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepo repo;
+    private UserRepo userRepo;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        Users user = repo.findByUsername(username);
-
-        if(user == null){
-            throw new UsernameNotFoundException("User not found");
+        Users user = userRepo.findByUsername(username);
+        if (user == null) {
+            System.out.println("User Not Found");
+            throw new UsernameNotFoundException("user not found");
         }
+
         return new UserPrincipal(user);
-
-
     }
 }

@@ -1,6 +1,6 @@
 package com.suja.SpringSecEx.model;
 
-import com.suja.SpringSecEx.util.Role;
+import com.suja.SpringSecEx.role.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,7 +41,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAuthorities();
+       // return role.getAuthorities();
+        return null;
     }
 
     @Override

@@ -1,7 +1,10 @@
 package com.suja.SpringSecEx.dto;
 
 
-import com.suja.SpringSecEx.util.Role;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.suja.SpringSecEx.role.NotRoles;
+import com.suja.SpringSecEx.role.Role;
+import com.suja.SpringSecEx.role.RoleDeserializer;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -26,10 +29,12 @@ public class RegisterRequestDto {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Pattern(
-            regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\\\\d!@#$%^&*]{8,}$",
-            message = "Password must contain at least 8 characters, one uppercase letter, one number and one special character"
-    )
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$",
+            message = "Password must contain at least one digit, one uppercase and one lowercase letter, and at least 8 characters")
     private String password;
+
+
+    @NotRoles()
+    @JsonDeserialize(using = RoleDeserializer.class)
     private Role role;
 }

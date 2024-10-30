@@ -1,42 +1,38 @@
 package com.suja.SpringSecEx.service;
 
-
-import com.suja.SpringSecEx.model.Users;
-import com.suja.SpringSecEx.repo.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
+import com.suja.SpringSecEx.dto.ChangePasswordRequestDto;
+import com.suja.SpringSecEx.model.User;
+import com.suja.SpringSecEx.util.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private JWTService jwtService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository repository;
+    public void changePassword(ChangePasswordRequestDto request, Principal connectedUser) {
 
-    @Autowired
-    AuthenticationManager authManager;
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-    @Autowired
-    private UserRepo repo;
-
-
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-
-    public Users register(Users user) {
-        user.setPassword(encoder.encode(user.getPassword()));
-        repo.save(user);
-        return user;
-    }
-
-    public String verify(Users user) {
-        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(user.getUsername());
-        } else {
-            return "fail";
+        // check if the current password is correct
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalStateException("Wrong password");
         }
+        // check if the two new passwords are the same
+        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
+            throw new IllegalStateException("Password are not the same");
+        }
+
+        // update the password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        // save the new password
+        repository.save(user);
     }
 }

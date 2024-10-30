@@ -1,29 +1,33 @@
 package com.suja.SpringSecEx.controller;
 
-
-import com.suja.SpringSecEx.model.Users;
+import com.suja.SpringSecEx.dto.ChangePasswordRequestDto;
 import com.suja.SpringSecEx.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
+@RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService service;
+    private final UserService service;
 
-
-    @PostMapping("/register")
-    public Users register(@RequestBody Users user) {
-        return service.register(user);
-
+    @PatchMapping
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequestDto request,
+            Principal connectedUser
+    ) {
+        service.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/login")
-    public String login(@RequestBody Users user) {
 
-        return service.verify(user);
+    @GetMapping("/user")
+    public String getUser(Principal connectedUser) {
+        return "Suja";
     }
+
 }
